@@ -2,7 +2,9 @@ const pool = require('../lib/utils/pool');
 const setup = require('../data/setup');
 const request = require('supertest');
 const app = require('../lib/app');
-const { agent } = require('supertest');
+
+
+jest.mock('../lib/services/github');
 
 describe('user routes', () => {
   beforeEach(() => {
@@ -18,8 +20,15 @@ describe('user routes', () => {
       /https:\/\/github.com\/login\/oauth\/authorize\?client_id=[\w\d]+&scope=user&redirect_uri=http:\/\/localhost:7890\/api\/v1\/github\/callback/i
     );
   });
+
   it('/api/v1/github/callback should redirect the user to github/dashboard upon successful login in', async () => {
-    const res = await (await agent(app).get('api/v1/github/callback')).redirect(1);
+    console.log('hello');
+    const res = await request
+      .agent(app)
+      .get('/api/v1/github/callback?code=42')
+      .redirects(1);
+    console.log('================================');
+    console.log(res);
     expect(res.body).toEqual({
       id: expect.any(String),
       email: 'mockEmail@mocker.com',
