@@ -22,13 +22,10 @@ describe('user routes', () => {
   });
 
   it('/api/v1/github/callback should redirect the user to github/dashboard upon successful login in', async () => {
-    console.log('hello');
     const res = await request
       .agent(app)
       .get('/api/v1/github/callback?code=42')
       .redirects(1);
-    console.log('================================');
-    console.log(res);
     expect(res.body).toEqual({
       id: expect.any(String),
       email: 'mockEmail@mocker.com',
